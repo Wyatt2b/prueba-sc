@@ -2,12 +2,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
-# Copiar solo los archivos del proyecto
-COPY *.csproj ./
+# Copiar el archivo del proyecto y restaurar dependencias
+COPY ReforaTec.csproj .
 RUN dotnet restore
 
-# Copiar el resto del código
-COPY . ./
+# Copiar todo el código fuente
+COPY . .
 RUN dotnet publish -c Release -o out
 
 # Etapa 2: Ejecución

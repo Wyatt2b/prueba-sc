@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "ReforaTec",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-WKayFxoUt50KPhBq5EK/2EasM1rmecNImc6/GDkEMaY=",
+    "hash": "sha256-N57+x5wzyBSrfSFD9PjKQw4VIyZaEP651+uXKYkwnlo=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.vzj2a6aakt.js"
@@ -1242,16 +1242,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "ReforaTec.wasm",
-        "name": "ReforaTec.i1ln5quqdq.wasm",
-        "hash": "sha256-ugif5cGycrHXhlPq51N4gKNrDizNut4Jcwp3kGMIv3g=",
+        "name": "ReforaTec.8bt6mqglc6.wasm",
+        "hash": "sha256-HGhiMagkLWT3QFJOzfg4RWSZ6I5J9GILEph0KAb9Lds=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "ReforaTec.pdb",
-        "name": "ReforaTec.isllquvlyw.pdb",
-        "hash": "sha256-kiMZ/ZRKL2JKJvV+73zcHvEV7eus0HJ1anLPocEilZk=",
+        "name": "ReforaTec.tvpkk24azd.pdb",
+        "hash": "sha256-96NZMh5gV16+/yOnjgbW1oBAmlifjUevQuksmqreycc=",
         "cache": "force-cache"
       }
     ],

@@ -2461,9 +2461,6 @@ C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_EFIGS.tptq2av103.dat
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\Microsoft.DotNet.HotReload.WebAssembly.Browser.jiityjz7hu.wasm
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.i1ln5quqdq.wasm
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.isllquvlyw.pdb
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\dotnet.3ik5qg87nz.js
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\blazor.webassembly.w3qd1tpl0e.js.gz
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Authorization.4w3z20tuqk.wasm.gz
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Components.0z8r7oen0q.wasm.gz
@@ -2672,9 +2669,6 @@ C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_EFIGS.tptq2av103.dat.gz
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat.gz
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\Microsoft.DotNet.HotReload.WebAssembly.Browser.jiityjz7hu.wasm.gz
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.i1ln5quqdq.wasm.gz
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.isllquvlyw.pdb.gz
-C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\dotnet.3ik5qg87nz.js.gz
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\ReforaTec.staticwebassets.runtime.json
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\ReforaTec.staticwebassets.endpoints.json
 C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\ReforaTec.dll
@@ -3366,10 +3360,6 @@ C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\9cvuf7moy8-{0}
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\pujuml9mhy-{0}-tptq2av103-tptq2av103.gz
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\mk6fwnzn81-{0}-lfu7j35m59-lfu7j35m59.gz
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\5edb3wtlba-{0}-jiityjz7hu-jiityjz7hu.gz
-C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\6215ty62le-{0}-i1ln5quqdq-i1ln5quqdq.gz
-C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\ihpw8gxk0s-{0}-isllquvlyw-isllquvlyw.gz
-C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\048clompuc-{0}-3ik5qg87nz-3ik5qg87nz.gz
-C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\waceidp5ro-{0}-8nxni1zf3m-8nxni1zf3m.gz
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\staticwebassets.development.json
@@ -3380,3 +3370,13 @@ C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\ReforaTec.dll
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\refint\ReforaTec.dll
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\ReforaTec.pdb
 C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\ref\ReforaTec.dll
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.8bt6mqglc6.wasm
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.tvpkk24azd.pdb
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\dotnet.u07bmozctl.js
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.8bt6mqglc6.wasm.gz
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\ReforaTec.tvpkk24azd.pdb.gz
+C:\Users\wyatt\Downloads\proyecto sc\bin\Debug\net10.0\wwwroot\_framework\dotnet.u07bmozctl.js.gz
+C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\6215ty62le-{0}-8bt6mqglc6-8bt6mqglc6.gz
+C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\ihpw8gxk0s-{0}-tvpkk24azd-tvpkk24azd.gz
+C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\048clompuc-{0}-u07bmozctl-u07bmozctl.gz
+C:\Users\wyatt\Downloads\proyecto sc\obj\Debug\net10.0\compressed\waceidp5ro-{0}-xailq94ckl-xailq94ckl.gz

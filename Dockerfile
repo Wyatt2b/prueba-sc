@@ -1,13 +1,19 @@
 # Etapa 1: Compilación
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-COPY . .
-RUN dotnet publish "ReforaTec.csproj" -c Release -o /app/publish
+WORKDIR /app
+
+# Copiar solo los archivos del proyecto
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copiar el resto del código
+COPY . ./
+RUN dotnet publish -c Release -o out
 
 # Etapa 2: Ejecución
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app/out .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "ReforaTec.dll"]

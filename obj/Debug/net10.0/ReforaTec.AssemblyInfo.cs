@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ReforaTec")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ec2477db19171e922e118acc0a0e2f79cee95aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1cc8ab23bcb71d703ebff3471b7a1fdcb79bdae8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ReforaTec")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ReforaTec")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

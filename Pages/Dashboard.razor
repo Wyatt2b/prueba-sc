@@ -1,0 +1,116 @@
+@page "/"
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Dashboard (Inicio)
+    ----------------------------------------------------------------------------
+     Muestra un resumen distinto segun el rol activo. Los numeros se calculan a
+     partir de los datos de prueba (DatosDemo). Cuando exista el backend, estos
+     conteos vendran de la API.
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Inicio</h2>
+    <p class="page-sub">Resumen general del portal</p>
+</div>
+
+@if (AppState.RolActual == RolUsuario.Coordinador)
+{
+    <div class="cards">
+        <div class="card stat">
+            <span class="stat__num">@campaniasActivas</span>
+            <span class="stat__label">Campañas activas</span>
+        </div>
+        <div class="card stat">
+            <span class="stat__num">@totalArboles</span>
+            <span class="stat__label">Árboles registrados</span>
+        </div>
+        <div class="card stat">
+            <span class="stat__num">@totalAlumnos</span>
+            <span class="stat__label">Alumnos inscritos</span>
+        </div>
+        <div class="card stat">
+            <span class="stat__num stat__num--warn">@alumnosSinArbol</span>
+            <span class="stat__label">Sin árbol asignado</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card__title">Mis campañas</h3>
+        <table class="table">
+            <thead>
+                <tr><th>Campaña</th><th>Código</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in DatosDemo.Campanias)
+                {
+                    <tr>
+                        <td>@c.Nombre</td>
+                        <td><code>@c.Codigo</code></td>
+                        <td>
+                            <span class="badge @(c.EsActiva ? "badge--ok" : "badge--muted")">
+                                @c.EstadoTexto
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="cards">
+        <div class="card stat">
+            <span class="stat__num">@totalInquilinos</span>
+            <span class="stat__label">Instituciones</span>
+        </div>
+        <div class="card stat">
+            <span class="stat__num">@totalCoordinadores</span>
+            <span class="stat__label">Coordinadores</span>
+        </div>
+        <div class="card stat">
+            <span class="stat__num">@totalCampanias</span>
+            <span class="stat__label">Campañas en total</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card__title">Instituciones registradas</h3>
+        <table class="table">
+            <thead>
+                <tr><th>Tenant</th><th>Nombre</th><th>Ubicación</th><th>Estatus</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var i in DatosDemo.Inquilinos)
+                {
+                    <tr>
+                        <td><code>@i.TenantId</code></td>
+                        <td>@i.Nombre</td>
+                        <td>@i.Ubicacion</td>
+                        <td>
+                            <span class="badge @(i.Estatus == EstadoInquilino.Activo ? "badge--ok" : "badge--muted")">
+                                @i.EstatusTexto
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    // --- Conteos para el rol Coordinador ---
+    private int campaniasActivas => DatosDemo.Campanias.Count(c => c.EsActiva);
+    private int totalArboles     => DatosDemo.Arboles.Count;
+    private int totalAlumnos     => DatosDemo.Alumnos.Count;
+    private int alumnosSinArbol  => DatosDemo.Alumnos.Count(a => !a.TieneArbol);
+
+    // --- Conteos para el rol Administrador ---
+    private int totalInquilinos    => DatosDemo.Inquilinos.Count;
+    private int totalCoordinadores => DatosDemo.Usuarios.Count(u => u.Rol == RolUsuario.Coordinador);
+    private int totalCampanias     => DatosDemo.Campanias.Count;
+}

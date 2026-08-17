@@ -1,0 +1,130 @@
+@page "/coordinadores"
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Coordinadores  (Epica 3.2 registro de coordinadores)
+    ----------------------------------------------------------------------------
+     El Administrador del Sistema registra Coordinadores de Campana y los liga a
+     una institucion (inquilino):
+       - Si el correo NO existe -> se crea usuario nuevo con rol Coordinador.
+       - Si el correo YA existe -> se le sube el rol a Coordinador y se liga al
+         inquilino, sin borrar su historial.
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Coordinadores</h2>
+    <p class="page-sub">Asigna coordinadores a cada institución</p>
+</div>
+
+<div class="card">
+    <h3 class="card__title">Registrar coordinador</h3>
+    <div class="form-grid">
+        <div class="field">
+            <label class="field-label">Correo institucional</label>
+            <input class="input" type="email" @bind="correo"
+                   placeholder="coordinador@@cdmadero.tecnm.mx" />
+        </div>
+        <div class="field">
+            <label class="field-label">Institución</label>
+            <select class="input" @bind="inquilinoId">
+                <option value="0">— elige una institución —</option>
+                @foreach (var i in DatosDemo.Inquilinos)
+                {
+                    <option value="@i.Id">@i.TenantId — @i.Nombre</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <p class="msg @(mensajeEsError ? "msg--error" : "msg--ok")">@mensaje</p>
+    }
+
+    <button class="btn btn--primary" @onclick="Registrar">Registrar coordinador</button>
+</div>
+
+<div class="card">
+    <h3 class="card__title">Coordinadores registrados</h3>
+    <table class="table">
+        <thead>
+            <tr><th>Nombre</th><th>Correo</th><th>Institución</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in ListaCoordinadores())
+            {
+                <tr>
+                    <td>@u.Nombre</td>
+                    <td>@u.Correo</td>
+                    <td>@NombreInquilino(u.InquilinoId)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string correo = string.Empty;
+    private int inquilinoId = 0;
+
+    private string mensaje = string.Empty;
+    private bool mensajeEsError = false;
+
+    private const string Dominio = "@cdmadero.tecnm.mx";
+
+    private IEnumerable<Usuario> ListaCoordinadores()
+        => DatosDemo.Usuarios.Where(u => u.Rol == RolUsuario.Coordinador);
+
+    // Devuelve el nombre corto (Tenant) de la institucion de un usuario.
+    private string NombreInquilino(int id)
+        => DatosDemo.Inquilinos.FirstOrDefault(i => i.Id == id)?.TenantId ?? "—";
+
+    private void Registrar()
+    {
+        mensaje = string.Empty;
+        mensajeEsError = false;
+
+        var correoLimpio = correo.Trim().ToLower();
+
+        if (string.IsNullOrWhiteSpace(correoLimpio) || !correoLimpio.EndsWith(Dominio))
+        {
+            mensaje = $"Usa un correo institucional (termina en {Dominio}).";
+            mensajeEsError = true;
+            return;
+        }
+        if (inquilinoId == 0)
+        {
+            mensaje = "Elige la institución a la que pertenece.";
+            mensajeEsError = true;
+            return;
+        }
+
+        var existente = DatosDemo.Usuarios
+            .FirstOrDefault(u => u.Correo.ToLower() == correoLimpio);
+
+        if (existente is null)
+        {
+            DatosDemo.Usuarios.Add(new Usuario
+            {
+                Id = DatosDemo.SiguienteId(DatosDemo.Usuarios.Select(u => u.Id)),
+                Nombre = "Coordinador nuevo",
+                Correo = correo.Trim(),
+                Rol = RolUsuario.Coordinador,
+                InquilinoId = inquilinoId
+            });
+            mensaje = "Coordinador creado correctamente.";
+        }
+        else
+        {
+            // Subimos el rol y lo ligamos al inquilino, sin borrar su historial.
+            existente.Rol = RolUsuario.Coordinador;
+            existente.InquilinoId = inquilinoId;
+            mensaje = "El usuario existente ahora es coordinador.";
+        }
+
+        correo = string.Empty;
+        inquilinoId = 0;
+    }
+}

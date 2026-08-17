@@ -1,0 +1,67 @@
+﻿@using ReforaTec.Models
+
+@*
+    ============================================================================
+     MENU LATERAL: NavMenu
+    ----------------------------------------------------------------------------
+     Muestra secciones DISTINTAS segun el rol activo:
+
+       Coordinador de Campana -> Inicio, Campanas, Asignaciones, Equipo
+       Administrador Sistema  -> Inicio, Inquilinos, Coordinadores
+*@
+
+<nav class="sidebar">
+
+    <div class="sidebar__brand">
+        <span class="sidebar__leaf">🌳</span>
+        <span class="sidebar__name">ReforaTec</span>
+    </div>
+
+    <ul class="sidebar__links">
+
+        @* Inicio lo ven todos los roles *@
+        <li>
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="nav-link__icon">🏠</span><span>Inicio</span>
+            </NavLink>
+        </li>
+
+        @if (AppState.RolActual == RolUsuario.Coordinador)
+        {
+            <li>
+                <NavLink class="nav-link" href="campanias">
+                    <span class="nav-link__icon">📋</span><span>Campañas</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="nav-link" href="asignaciones">
+                    <span class="nav-link__icon">🌱</span><span>Asignaciones</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="nav-link" href="equipo">
+                    <span class="nav-link__icon">👷</span><span>Equipo de trabajo</span>
+                </NavLink>
+            </li>
+        }
+
+        @if (AppState.RolActual == RolUsuario.AdminSistema)
+        {
+            <li>
+                <NavLink class="nav-link" href="inquilinos">
+                    <span class="nav-link__icon">🏫</span><span>Instituciones</span>
+                </NavLink>
+            </li>
+            <li>
+                <NavLink class="nav-link" href="coordinadores">
+                    <span class="nav-link__icon">🧑‍💼</span><span>Coordinadores</span>
+                </NavLink>
+            </li>
+        }
+
+    </ul>
+
+    <div class="sidebar__footer">
+        <span>v0.1 · Frontend</span>
+    </div>
+</nav>

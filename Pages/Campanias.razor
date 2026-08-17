@@ -1,0 +1,150 @@
+@page "/campanias"
+@using System.Text
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Campanias  (Epica 2.1 crear campana + 2.3 exportar CSV)
+    ----------------------------------------------------------------------------
+     - Crear una campana nueva: el sistema le genera un codigo unico (CAMP-####).
+     - Ver el historial con su estado Activa/Inactiva (calculado por fecha).
+     - Exportar la lista de alumnos de una campana a CSV (nombre, num. control,
+       telefono, id de arbol y estado de salud del arbol).
+
+     La exportacion se arma aqui en el navegador con un enlace de descarga
+     (data URI), sin necesidad de backend.
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Campañas</h2>
+    <p class="page-sub">Crea campañas y consulta su historial</p>
+</div>
+
+@* ---------------- Formulario: nueva campana ---------------- *@
+<div class="card">
+    <h3 class="card__title">Nueva campaña</h3>
+
+    <div class="form-grid">
+        <div class="field">
+            <label class="field-label">Nombre</label>
+            <input class="input" @bind="nuevoNombre" placeholder="ReforaTec Primavera 2026" />
+        </div>
+        <div class="field">
+            <label class="field-label">Fecha de inicio</label>
+            <input class="input" type="date" @bind="nuevaInicio" />
+        </div>
+        <div class="field">
+            <label class="field-label">Fecha de fin</label>
+            <input class="input" type="date" @bind="nuevaFin" />
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <p class="msg @(mensajeEsError ? "msg--error" : "msg--ok")">@mensaje</p>
+    }
+
+    <button class="btn btn--primary" @onclick="CrearCampania">Crear campaña</button>
+</div>
+
+@* ---------------- Tabla: historial ---------------- *@
+<div class="card">
+    <h3 class="card__title">Historial de campañas</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th><th>Código</th><th>Vigencia</th>
+                <th>Estado</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in DatosDemo.Campanias)
+            {
+                <tr>
+                    <td>@c.Nombre</td>
+                    <td><code>@c.Codigo</code></td>
+                    <td>@c.FechaInicio.ToString("dd/MM/yyyy") – @c.FechaFin.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <span class="badge @(c.EsActiva ? "badge--ok" : "badge--muted")">
+                            @c.EstadoTexto
+                        </span>
+                    </td>
+                    <td>
+                        @* El enlace descarga el CSV de esa campana. *@
+                        <a class="btn btn--small" download="@($"{c.Codigo}.csv")"
+                           href="@ConstruirCsv(c.Id)">
+                            Exportar CSV
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    // Campos del formulario de nueva campana.
+    private string nuevoNombre = string.Empty;
+    private DateTime nuevaInicio = DateTime.Today;
+    private DateTime nuevaFin = DateTime.Today.AddMonths(3);
+
+    private string mensaje = string.Empty;
+    private bool mensajeEsError = false;
+
+    // Crear campana: valida, genera codigo y la agrega a la lista.
+    private void CrearCampania()
+    {
+        if (string.IsNullOrWhiteSpace(nuevoNombre))
+        {
+            mensaje = "Escribe un nombre para la campaña.";
+            mensajeEsError = true;
+            return;
+        }
+        if (nuevaFin < nuevaInicio)
+        {
+            mensaje = "La fecha de fin no puede ser anterior a la de inicio.";
+            mensajeEsError = true;
+            return;
+        }
+
+        var nueva = new Campania
+        {
+            Id = DatosDemo.SiguienteId(DatosDemo.Campanias.Select(c => c.Id)),
+            Nombre = nuevoNombre.Trim(),
+            Codigo = DatosDemo.GenerarCodigoCampania(),   // codigo unico (demo)
+            FechaInicio = nuevaInicio,
+            FechaFin = nuevaFin,
+            InquilinoId = 1
+        };
+        DatosDemo.Campanias.Add(nueva);
+
+        mensaje = $"Campaña creada. Código de inscripción: {nueva.Codigo}";
+        mensajeEsError = false;
+        nuevoNombre = string.Empty;   // limpiamos el formulario
+    }
+
+    // Arma un archivo CSV con los alumnos de la campana y lo devuelve como
+    // "data URI" para que el enlace de descarga lo entregue como archivo.
+    private string ConstruirCsv(int campaniaId)
+    {
+        var sb = new StringBuilder();
+        // Encabezados
+        sb.AppendLine("Nombre,NumeroControl,Telefono,ArbolId,EstadoSalud");
+
+        var alumnos = DatosDemo.Alumnos.Where(a => a.CampaniaId == campaniaId);
+        foreach (var a in alumnos)
+        {
+            // Buscamos el arbol asignado (si tiene) para poner su estado de salud.
+            var arbol = DatosDemo.Arboles.FirstOrDefault(ar => ar.Id == a.ArbolId);
+            var idArbol = a.ArbolId?.ToString() ?? "";
+            var salud = arbol is null ? "Sin arbol" : arbol.Salud.ToString();
+
+            sb.AppendLine($"{a.Nombre},{a.NumeroControl},{a.Telefono},{idArbol},{salud}");
+        }
+
+        // Convertimos el texto en un enlace descargable.
+        var contenido = Uri.EscapeDataString(sb.ToString());
+        return $"data:text/csv;charset=utf-8,{contenido}";
+    }
+}

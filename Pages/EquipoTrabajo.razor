@@ -1,0 +1,111 @@
+@page "/equipo"
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Equipo de trabajo  (Epica 2.4 alta de inspectores)
+    ----------------------------------------------------------------------------
+     El coordinador da de alta INSPECTORES por su correo institucional:
+       - Si el correo NO existe -> se crea un usuario nuevo con rol Inspector.
+       - Si el correo YA existe (ej. un Alumno) -> se le SUBE el rol a Inspector
+         sin borrar su historial.
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Equipo de trabajo</h2>
+    <p class="page-sub">Da de alta inspectores de campo</p>
+</div>
+
+<div class="card">
+    <h3 class="card__title">Registrar inspector</h3>
+    <div class="inline-form">
+        <input class="input" type="email" @bind="correo"
+               placeholder="inspector@@cdmadero.tecnm.mx" />
+        <button class="btn btn--primary" @onclick="Registrar">Dar de alta</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <p class="msg @(mensajeEsError ? "msg--error" : "msg--ok")">@mensaje</p>
+    }
+</div>
+
+<div class="card">
+    <h3 class="card__title">Inspectores registrados</h3>
+    <table class="table">
+        <thead>
+            <tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Inspectores())
+            {
+                <tr>
+                    <td>@u.Nombre</td>
+                    <td>@u.Correo</td>
+                    <td><span class="badge badge--ok">@u.RolTexto</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string correo = string.Empty;
+    private string mensaje = string.Empty;
+    private bool mensajeEsError = false;
+
+    private const string Dominio = "@cdmadero.tecnm.mx";
+
+    // Solo los usuarios con rol Inspector.
+    private IEnumerable<Usuario> Inspectores()
+        => DatosDemo.Usuarios.Where(u => u.Rol == RolUsuario.Inspector);
+
+    private void Registrar()
+    {
+        mensaje = string.Empty;
+        mensajeEsError = false;
+
+        var correoLimpio = correo.Trim().ToLower();
+
+        // Validar dominio institucional.
+        if (string.IsNullOrWhiteSpace(correoLimpio) || !correoLimpio.EndsWith(Dominio))
+        {
+            mensaje = $"Usa un correo institucional (termina en {Dominio}).";
+            mensajeEsError = true;
+            return;
+        }
+
+        // Buscar si ese correo ya existe.
+        var existente = DatosDemo.Usuarios
+            .FirstOrDefault(u => u.Correo.ToLower() == correoLimpio);
+
+        if (existente is null)
+        {
+            // No existe: creamos un usuario nuevo como Inspector.
+            DatosDemo.Usuarios.Add(new Usuario
+            {
+                Id = DatosDemo.SiguienteId(DatosDemo.Usuarios.Select(u => u.Id)),
+                Nombre = "Inspector nuevo",
+                Correo = correo.Trim(),
+                Rol = RolUsuario.Inspector,
+                InquilinoId = 1
+            });
+            mensaje = "Inspector creado correctamente.";
+        }
+        else if (existente.Rol == RolUsuario.Inspector)
+        {
+            mensaje = "Ese correo ya es inspector.";
+            mensajeEsError = true;
+            return;
+        }
+        else
+        {
+            // Ya existe con otro rol: lo subimos a Inspector (sin borrar nada).
+            existente.Rol = RolUsuario.Inspector;
+            mensaje = "El usuario existente ahora es inspector.";
+        }
+
+        correo = string.Empty;
+    }
+}

@@ -1,0 +1,131 @@
+@page "/asignaciones"
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Asignaciones  (Epica 2.2 asignacion manual de arboles)
+    ----------------------------------------------------------------------------
+     El coordinador vincula a un alumno (ya inscrito) con un arbol DISPONIBLE.
+     Un arbol esta disponible si ningun alumno lo tiene asignado.
+
+     Al asignar, guardamos el ArbolId en el alumno. En un caso real, aqui tambien
+     se avisaria a la app movil del alumno (eso lo hara el backend).
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Asignaciones</h2>
+    <p class="page-sub">Vincula cada alumno con un árbol disponible</p>
+</div>
+
+@if (!string.IsNullOrEmpty(mensaje))
+{
+    <p class="msg msg--ok">@mensaje</p>
+}
+
+<div class="card">
+    <h3 class="card__title">Alumnos de la campaña</h3>
+    <table class="table">
+        <thead>
+            <tr><th>Alumno</th><th># Control</th><th>Árbol asignado</th><th>Asignar</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var alumno in DatosDemo.Alumnos)
+            {
+                <tr>
+                    <td>@alumno.Nombre</td>
+                    <td>@alumno.NumeroControl</td>
+
+                    <td>
+                        @if (alumno.TieneArbol)
+                        {
+                            var arbol = DatosDemo.Arboles.First(a => a.Id == alumno.ArbolId);
+                            <span class="badge badge--ok">@arbol.Etiqueta</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge--warn">Sin asignar</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!alumno.TieneArbol)
+                        {
+                            @* Menu con los arboles disponibles + boton asignar.
+                               Guardamos la seleccion por alumno en un diccionario. *@
+                            <div class="inline-form">
+                                <select class="input input--sm"
+                                        @onchange="e => Seleccionar(alumno.Id, e.Value?.ToString())">
+                                    <option value="">— elige un árbol —</option>
+                                    @foreach (var arbol in ArbolesDisponibles())
+                                    {
+                                        <option value="@arbol.Id">@arbol.Etiqueta</option>
+                                    }
+                                </select>
+                                <button class="btn btn--small" @onclick="() => Asignar(alumno)">
+                                    Asignar
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn--small btn--ghost" @onclick="() => Quitar(alumno)">
+                                Quitar
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string mensaje = string.Empty;
+
+    // Guarda que arbol eligio el usuario en el menu de cada alumno:
+    //   clave = Id del alumno,  valor = Id del arbol elegido.
+    private Dictionary<int, int> seleccion = new();
+
+    // Arboles que NADIE tiene asignado todavia.
+    private IEnumerable<Arbol> ArbolesDisponibles()
+    {
+        var ocupados = DatosDemo.Alumnos
+            .Where(a => a.ArbolId.HasValue)
+            .Select(a => a.ArbolId!.Value)
+            .ToHashSet();
+
+        return DatosDemo.Arboles.Where(a => !ocupados.Contains(a.Id));
+    }
+
+    // Se llama cuando el usuario elige un arbol en el menu de un alumno.
+    private void Seleccionar(int alumnoId, string? valor)
+    {
+        if (int.TryParse(valor, out var arbolId))
+            seleccion[alumnoId] = arbolId;
+        else
+            seleccion.Remove(alumnoId);
+    }
+
+    // Asigna el arbol elegido al alumno.
+    private void Asignar(Alumno alumno)
+    {
+        if (!seleccion.TryGetValue(alumno.Id, out var arbolId))
+        {
+            mensaje = "Primero elige un árbol en el menú.";
+            return;
+        }
+
+        alumno.ArbolId = arbolId;                 // <- aqui se concreta la relacion
+        seleccion.Remove(alumno.Id);
+        var arbol = DatosDemo.Arboles.First(a => a.Id == arbolId);
+        mensaje = $"Se asignó {arbol.Especie} a {alumno.Nombre}.";
+    }
+
+    // Deshace la asignacion (deja al alumno sin arbol).
+    private void Quitar(Alumno alumno)
+    {
+        alumno.ArbolId = null;
+        mensaje = $"Se quitó el árbol de {alumno.Nombre}.";
+    }
+}

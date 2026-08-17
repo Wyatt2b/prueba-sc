@@ -1,0 +1,109 @@
+@page "/inquilinos"
+@using ReforaTec.Models
+
+@*
+    ============================================================================
+     PAGINA: Instituciones / Inquilinos  (Epica 3.1 aprovisionamiento)
+    ----------------------------------------------------------------------------
+     El Administrador del Sistema da de alta instituciones (escuelas u
+     organizaciones). Cada una recibe un identificador unico (Tenant) y queda
+     como Activa. Si el nombre o el identificador ya existe, se avisa y no se
+     duplica.
+    ============================================================================
+*@
+
+<div class="page-head">
+    <h2>Instituciones</h2>
+    <p class="page-sub">Registra y administra los inquilinos de la plataforma</p>
+</div>
+
+<div class="card">
+    <h3 class="card__title">Nueva institución</h3>
+    <div class="form-grid">
+        <div class="field">
+            <label class="field-label">Identificador (Tenant)</label>
+            <input class="input" @bind="nuevoTenant" placeholder="ITCM" />
+        </div>
+        <div class="field">
+            <label class="field-label">Nombre</label>
+            <input class="input" @bind="nuevoNombre" placeholder="Instituto Tecnológico..." />
+        </div>
+        <div class="field">
+            <label class="field-label">Ubicación</label>
+            <input class="input" @bind="nuevaUbicacion" placeholder="Ciudad Madero" />
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <p class="msg @(mensajeEsError ? "msg--error" : "msg--ok")">@mensaje</p>
+    }
+
+    <button class="btn btn--primary" @onclick="Registrar">Registrar institución</button>
+</div>
+
+<div class="card">
+    <h3 class="card__title">Instituciones registradas</h3>
+    <table class="table">
+        <thead>
+            <tr><th>Tenant</th><th>Nombre</th><th>Ubicación</th><th>Estatus</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var i in DatosDemo.Inquilinos)
+            {
+                <tr>
+                    <td><code>@i.TenantId</code></td>
+                    <td>@i.Nombre</td>
+                    <td>@i.Ubicacion</td>
+                    <td><span class="badge badge--ok">@i.EstatusTexto</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string nuevoTenant = string.Empty;
+    private string nuevoNombre = string.Empty;
+    private string nuevaUbicacion = string.Empty;
+
+    private string mensaje = string.Empty;
+    private bool mensajeEsError = false;
+
+    private void Registrar()
+    {
+        mensaje = string.Empty;
+        mensajeEsError = false;
+
+        if (string.IsNullOrWhiteSpace(nuevoTenant) || string.IsNullOrWhiteSpace(nuevoNombre))
+        {
+            mensaje = "El identificador y el nombre son obligatorios.";
+            mensajeEsError = true;
+            return;
+        }
+
+        // Validar que no exista ya (por identificador o por nombre).
+        bool yaExiste = DatosDemo.Inquilinos.Any(i =>
+            i.TenantId.Equals(nuevoTenant.Trim(), StringComparison.OrdinalIgnoreCase) ||
+            i.Nombre.Equals(nuevoNombre.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (yaExiste)
+        {
+            mensaje = "La institución ya se encuentra registrada.";
+            mensajeEsError = true;
+            return;
+        }
+
+        DatosDemo.Inquilinos.Add(new Inquilino
+        {
+            Id = DatosDemo.SiguienteId(DatosDemo.Inquilinos.Select(i => i.Id)),
+            TenantId = nuevoTenant.Trim().ToUpper(),
+            Nombre = nuevoNombre.Trim(),
+            Ubicacion = nuevaUbicacion.Trim(),
+            Estatus = EstadoInquilino.Activo
+        });
+
+        mensaje = "Institución registrada correctamente.";
+        nuevoTenant = nuevoNombre = nuevaUbicacion = string.Empty;
+    }
+}

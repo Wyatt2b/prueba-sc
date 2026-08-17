@@ -1,0 +1,144 @@
+@page "/login"
+@layout AuthLayout
+@using ReforaTec.Models
+@inject NavigationManager Nav
+
+@*
+    ============================================================================
+     PAGINA: Login  (Epica 1 - Autenticacion por OTP)
+    ----------------------------------------------------------------------------
+     Simula el inicio de sesion por codigo temporal (OTP) al correo institucional.
+     Como no hay backend todavia:
+       - Validamos el dominio del correo aqui, en el frontend.
+       - El "envio" del codigo es simulado (el backend mandaria el correo real).
+       - Cualquier codigo de 6 digitos es aceptado en la demo.
+       - El ROL se toma de los datos de prueba: solo Admin o Coordinador entran;
+         cualquier otro rol ve el mensaje "Rol No Autorizado".
+
+     El flujo tiene 3 pasos que controlamos con la variable "paso".
+    ============================================================================
+*@
+
+<div class="auth-card">
+
+    <div class="auth-brand">
+        <span class="auth-leaf">🌳</span>
+        <h1>ReforaTec</h1>
+    </div>
+    <p class="auth-sub">Portal administrativo</p>
+
+    @if (paso == Paso.Correo)
+    {
+        <label class="field-label">Correo institucional</label>
+        <input class="input" type="email" @bind="correo"
+               placeholder="usuario@@cdmadero.tecnm.mx" />
+
+        @if (!string.IsNullOrEmpty(mensaje))
+        {
+            <p class="msg msg--error">@mensaje</p>
+        }
+
+        <button class="btn btn--primary btn--block" @onclick="EnviarCodigo">
+            Enviar código
+        </button>
+
+        <p class="auth-hint">
+            Demo: usa <b>coordinador@@cdmadero.tecnm.mx</b> o
+            <b>admin@@cdmadero.tecnm.mx</b>
+        </p>
+    }
+    else if (paso == Paso.Codigo)
+    {
+        <p class="auth-info">Enviamos un código de 6 dígitos a <b>@correo</b>.</p>
+
+        <label class="field-label">Código de verificación</label>
+        <input class="input input--code" maxlength="6" @bind="codigo" placeholder="######" />
+
+        @if (!string.IsNullOrEmpty(mensaje))
+        {
+            <p class="msg msg--error">@mensaje</p>
+        }
+
+        <button class="btn btn--primary btn--block" @onclick="VerificarCodigo">Entrar</button>
+        <button class="btn btn--ghost btn--block" @onclick="Volver">Cambiar correo</button>
+
+        <p class="auth-hint">Demo: escribe cualquier código de 6 dígitos (ej. 123456).</p>
+    }
+    else
+    {
+        <p class="msg msg--error msg--big">Rol No Autorizado</p>
+        <p class="auth-info">Esta cuenta no tiene permisos para el portal administrativo.</p>
+        <button class="btn btn--ghost btn--block" @onclick="Volver">Volver</button>
+    }
+</div>
+
+@code {
+    // Los tres estados posibles de la pantalla.
+    private enum Paso { Correo, Codigo, NoAutorizado }
+    private Paso paso = Paso.Correo;
+
+    // Campos que escribe el usuario.
+    private string correo = string.Empty;
+    private string codigo = string.Empty;
+    private string mensaje = string.Empty;
+
+    // Usuario encontrado por su correo (para conocer su rol al validar).
+    private Usuario? usuario;
+
+    private const string Dominio = "@cdmadero.tecnm.mx";
+
+    // ---- Paso 1: validar correo y "enviar" el codigo ------------------------
+    private void EnviarCodigo()
+    {
+        mensaje = string.Empty;
+
+        // Validacion de dominio institucional.
+        if (string.IsNullOrWhiteSpace(correo) ||
+            !correo.Trim().ToLower().EndsWith(Dominio))
+        {
+            mensaje = $"Usa tu correo institucional (debe terminar en {Dominio}).";
+            return;
+        }
+
+        // Buscamos al usuario. AQUI el backend generaria y enviaria el OTP real.
+        usuario = DatosDemo.Usuarios
+            .FirstOrDefault(u => u.Correo.ToLower() == correo.Trim().ToLower());
+
+        // Avanzamos a capturar el codigo. La validacion del rol se hace despues,
+        // para no revelar que cuentas existen y cuales no.
+        paso = Paso.Codigo;
+    }
+
+    // ---- Paso 2: verificar el codigo y el rol -------------------------------
+    private void VerificarCodigo()
+    {
+        mensaje = string.Empty;
+
+        // El codigo debe ser de 6 digitos.
+        if (codigo.Length != 6 || !codigo.All(char.IsDigit))
+        {
+            mensaje = "El código debe tener 6 dígitos.";
+            return;
+        }
+
+        // Solo Administrador o Coordinador pueden entrar al portal.
+        if (usuario is null ||
+            (usuario.Rol != RolUsuario.AdminSistema && usuario.Rol != RolUsuario.Coordinador))
+        {
+            paso = Paso.NoAutorizado;
+            return;
+        }
+
+        // Todo correcto: iniciamos sesion y vamos al dashboard.
+        AppState.IniciarSesion(usuario.Rol, usuario.Correo);
+        Nav.NavigateTo("/");
+    }
+
+    // Regresar al primer paso.
+    private void Volver()
+    {
+        paso = Paso.Correo;
+        codigo = string.Empty;
+        mensaje = string.Empty;
+    }
+}

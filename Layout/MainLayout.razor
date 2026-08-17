@@ -1,0 +1,81 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@using ReforaTec.Models
+@inject NavigationManager Nav
+
+@*
+    ============================================================================
+     LAYOUT PRINCIPAL: MainLayout
+    ----------------------------------------------------------------------------
+     Marco que rodea a TODAS las pantallas internas del portal (menu lateral +
+     barra superior). Lo de cada pagina se dibuja en @Body.
+
+     Incluye un selector "Ver como:" que sirve SOLO para la demo: permite
+     cambiar entre Coordinador y Administrador del Sistema para ver como cambia
+     el menu, ya que todavia no hay login real con roles del backend.
+    ============================================================================
+*@
+
+<div class="app-shell">
+
+    <NavMenu />
+
+    <main class="app-content">
+
+        <header class="topbar">
+            <div class="topbar__title">
+                <span class="topbar__eyebrow">Portal administrativo</span>
+                <h1 class="topbar__h1">ReforaTec</h1>
+            </div>
+
+            <div class="topbar__right">
+
+                @* --- Usuario actual --- *@
+                <div class="topbar__user">
+                    <span class="user-badge">@Inicial</span>
+                    <div class="user-meta">
+                        <span class="user-name">@Nombre</span>
+                        <span class="user-role">@RolTexto</span>
+                    </div>
+                </div>
+
+                <button class="btn btn--ghost" @onclick="CerrarSesion">Salir</button>
+            </div>
+        </header>
+
+        <section class="page-body">
+            @Body
+        </section>
+
+    </main>
+</div>
+
+@code {
+    // Al iniciar: nos suscribimos a los cambios de estado (para redibujar) y,
+    // si nadie inicio sesion, mandamos al login.
+    protected override void OnInitialized()
+    {
+        AppState.OnCambio += Redibujar;
+        if (!AppState.Autenticado)
+            Nav.NavigateTo("/login");
+    }
+
+    // Al destruir el componente nos DES-suscribimos (evita fugas de memoria).
+    public void Dispose() => AppState.OnCambio -= Redibujar;
+
+    // InvokeAsync asegura que el redibujado corra en el hilo correcto.
+    private void Redibujar() => InvokeAsync(StateHasChanged);
+
+    // Datos que se muestran en la barra superior segun el rol activo (demo).
+    private string Nombre  => AppState.RolActual == RolUsuario.AdminSistema ? "Admin General" : "Danna";
+    private string RolTexto => AppState.RolActual == RolUsuario.AdminSistema
+                                ? "Administrador del Sistema"
+                                : "Coordinador de Campana";
+    private string Inicial => string.IsNullOrEmpty(Nombre) ? "?" : Nombre[..1];
+
+    private void CerrarSesion()
+    {
+        AppState.CerrarSesion();
+        Nav.NavigateTo("/login");
+    }
+}

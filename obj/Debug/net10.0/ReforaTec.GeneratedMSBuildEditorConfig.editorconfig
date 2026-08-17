@@ -1,0 +1,82 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.VerifyReferenceTrimCompatibility = 
+build_property.VerifyReferenceAotCompatibility = 
+build_property.TargetFramework = net10.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EntryPointFilePath = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = ReforaTec
+build_property.RootNamespace = ReforaTec
+build_property.ProjectDir = C:\Users\wyatt\Downloads\Nueva carpeta\ReforaTec\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 10.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\wyatt\Downloads\Nueva carpeta\ReforaTec
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 10.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Layout/AuthLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XEF1dGhMYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Asignaciones.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXNpZ25hY2lvbmVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Campanias.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2FtcGFuaWFzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Coordinadores.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29vcmRpbmFkb3Jlcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Dashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/EquipoTrabajo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBvVHJhYmFqby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Inquilinos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5xdWlsaW5vcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90Rm91bmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-06yl5590a1
+
+[C:/Users/wyatt/Downloads/Nueva carpeta/ReforaTec/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-1ofyyc3ah0

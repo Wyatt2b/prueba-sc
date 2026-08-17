@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "8W/hj3VLF8M=",
+  "dgSpecHash": "nAuX82FqTwI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\wyatt\\Downloads\\Nueva carpeta\\ReforaTec\\ReforaTec.csproj",
+  "projectFilePath": "C:\\Users\\wyatt\\Downloads\\proyecto sc\\ReforaTec.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\wyatt\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.11\\microsoft.aspnetcore.app.internal.assets.10.0.11.nupkg.sha512",
     "C:\\Users\\wyatt\\.nuget\\packages\\microsoft.aspnetcore.authorization\\10.0.10\\microsoft.aspnetcore.authorization.10.0.10.nupkg.sha512",

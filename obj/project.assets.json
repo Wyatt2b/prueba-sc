@@ -2092,11 +2092,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wyatt\\Downloads\\Nueva carpeta\\ReforaTec\\ReforaTec.csproj",
+      "projectUniqueName": "C:\\Users\\wyatt\\Downloads\\proyecto sc\\ReforaTec.csproj",
       "projectName": "ReforaTec",
-      "projectPath": "C:\\Users\\wyatt\\Downloads\\Nueva carpeta\\ReforaTec\\ReforaTec.csproj",
+      "projectPath": "C:\\Users\\wyatt\\Downloads\\proyecto sc\\ReforaTec.csproj",
       "packagesPath": "C:\\Users\\wyatt\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wyatt\\Downloads\\Nueva carpeta\\ReforaTec\\obj\\",
+      "outputPath": "C:\\Users\\wyatt\\Downloads\\proyecto sc\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

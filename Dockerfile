@@ -10,23 +10,21 @@ RUN dotnet restore
 COPY . .
 RUN dotnet publish -c Release -o /app/publish
 
-# Verificar que el archivo existe (diagnóstico)
-RUN ls -la /app/publish
+# Etapa 2: Servir con Nginx
+FROM nginx:alpine AS final
+WORKDIR /usr/share/nginx/html
 
-# Etapa 2: Ejecución
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
-WORKDIR /app
+# Copiar los archivos estáticos de Blazor
+COPY --from=build /app/publish/wwwroot .
 
-# Copiar los archivos publicados
-COPY --from=build /app/publish .
+# Configurar Nginx para soportar SPA (Single Page Application)
+RUN echo 'server { \
+    listen 8080; \
+    location / { \
+        root /usr/share/nginx/html; \
+        try_files $uri $uri/ /index.html =404; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
-# Verificar que el archivo se copió (diagnóstico)
-RUN ls -la /app
-
-# Configurar puerto
 EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
-ENV ASPNETCORE_ENVIRONMENT=Production
-
-# Comando de inicio
-ENTRYPOINT ["dotnet", "ReforaTec.dll"]
+CMD ["nginx", "-g", "daemon off;"]

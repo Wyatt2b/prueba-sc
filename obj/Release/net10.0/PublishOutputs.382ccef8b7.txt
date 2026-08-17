@@ -1,0 +1,4 @@
+C:\Users\wyatt\Downloads\proyecto sc\bin\Release\net10.0\publish\wwwroot\index.html
+C:\Users\wyatt\Downloads\proyecto sc\bin\Release\net10.0\publish\ReforaTec.runtimeconfig.json
+C:\Users\wyatt\Downloads\proyecto sc\bin\Release\net10.0\publish\dotnet.js
+C:\Users\wyatt\Downloads\proyecto sc\bin\Release\net10.0\publish\web.config

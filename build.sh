@@ -5,11 +5,25 @@ chmod +x dotnet-install.sh
 ./dotnet/dotnet --version
 ./dotnet/dotnet publish -c Release -o output
 
-# Crear _headers con todos los MIME types necesarios para Blazor
-cat > output/wwwroot/_headers << 'EOF'
-/*
-  Content-Type: text/html
+# ==============================================
+# FORZAR COPIA DE _headers (SOLUCIÓN DEFINITIVA)
+# ==============================================
 
+# 1. Verificar si _headers existe en wwwroot
+if [ -f "wwwroot/_headers" ]; then
+    echo "✓ _headers encontrado en wwwroot"
+    cp wwwroot/_headers output/wwwroot/
+else
+    echo "⚠️ _headers NO encontrado en wwwroot - Creando uno nuevo"
+fi
+
+# 2. Verificar que _headers existe en output
+if [ -f "output/wwwroot/_headers" ]; then
+    echo "✓ _headers copiado correctamente a output/wwwroot/"
+    cat output/wwwroot/_headers
+else
+    echo "❌ ERROR: _headers NO está en output/wwwroot - Creándolo manualmente"
+    cat > output/wwwroot/_headers << 'EOF'
 /*.css
   Content-Type: text/css
 
@@ -25,9 +39,6 @@ cat > output/wwwroot/_headers << 'EOF'
 /*.dat
   Content-Type: application/octet-stream
 
-/*.json
-  Content-Type: application/json
-
 /_framework/*
   Content-Type: application/octet-stream
 
@@ -40,8 +51,12 @@ cat > output/wwwroot/_headers << 'EOF'
 /_framework/*.css
   Content-Type: text/css
 EOF
+    echo "✓ _headers creado manualmente en output/wwwroot/"
+fi
 
-# Asegurar que index.html tenga el base href correcto
-sed -i 's/<base href="[^"]*"/<base href="\/"/g' output/wwwroot/index.html
+# 3. Mostrar el contenido final
+echo "=== CONTENIDO FINAL DE _headers ==="
+cat output/wwwroot/_headers
+echo "===================================="
 
-echo "✓ _headers creado y index.html corregido"
+echo "✓ Build completado"

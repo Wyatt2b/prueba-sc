@@ -6,24 +6,11 @@ chmod +x dotnet-install.sh
 ./dotnet/dotnet publish -c Release -o output
 
 # ==============================================
-# FORZAR COPIA DE _headers (SOLUCIÓN DEFINITIVA)
+# MANEJAR FINGERPRINTING EN CLOUDFLARE PAGES
 # ==============================================
 
-# 1. Verificar si _headers existe en wwwroot
-if [ -f "wwwroot/_headers" ]; then
-    echo "✓ _headers encontrado en wwwroot"
-    cp wwwroot/_headers output/wwwroot/
-else
-    echo "⚠️ _headers NO encontrado en wwwroot - Creando uno nuevo"
-fi
-
-# 2. Verificar que _headers existe en output
-if [ -f "output/wwwroot/_headers" ]; then
-    echo "✓ _headers copiado correctamente a output/wwwroot/"
-    cat output/wwwroot/_headers
-else
-    echo "❌ ERROR: _headers NO está en output/wwwroot - Creándolo manualmente"
-    cat > output/wwwroot/_headers << 'EOF'
+# 1. Crear _headers con los MIME types correctos
+cat > output/wwwroot/_headers << 'EOF'
 /*.css
   Content-Type: text/css
 
@@ -51,12 +38,43 @@ else
 /_framework/*.css
   Content-Type: text/css
 EOF
-    echo "✓ _headers creado manualmente en output/wwwroot/"
+
+# 2. Corregir el placeholder en index.html
+if [ -f "output/wwwroot/index.html" ]; then
+    echo "✓ Corrigiendo index.html..."
+    # Reemplazar cualquier placeholder con el nombre real
+    sed -i 's/blazor\.webassembly#[^{]*{fingerprint}/blazor.webassembly/g' output/wwwroot/index.html
+    sed -i 's/blazor\.webassembly#[.{fingerprint}]/blazor.webassembly/g' output/wwwroot/index.html
+    
+    # Asegurar que base href sea /
+    sed -i 's/<base href="[^"]*"/<base href="\/"/g' output/wwwroot/index.html
+    echo "✓ index.html corregido"
 fi
 
-# 3. Mostrar el contenido final
-echo "=== CONTENIDO FINAL DE _headers ==="
-cat output/wwwroot/_headers
-echo "===================================="
+# 3. Copiar archivos fingerprinted a nombres sin fingerprint
+if [ -d "output/wwwroot/_framework" ]; then
+    echo "✓ Procesando archivos en _framework..."
+    
+    # Copiar cualquier archivo blazor.webassembly.*.js a blazor.webassembly.js
+    for file in output/wwwroot/_framework/blazor.webassembly.*.js; do
+        if [ -f "$file" ]; then
+            cp "$file" "output/wwwroot/_framework/blazor.webassembly.js"
+            echo "✓ Copiado: $(basename $file) → blazor.webassembly.js"
+        fi
+    done
+    
+    # Copiar cualquier archivo blazor.webassembly.*.css a blazor.webassembly.css
+    for file in output/wwwroot/_framework/blazor.webassembly.*.css; do
+        if [ -f "$file" ]; then
+            cp "$file" "output/wwwroot/_framework/blazor.webassembly.css"
+            echo "✓ Copiado: $(basename $file) → blazor.webassembly.css"
+        fi
+    done
+fi
+
+# 4. Verificar archivos importantes
+echo "=== ARCHIVOS EN _framework ==="
+ls -la output/wwwroot/_framework/ || echo "⚠️ _framework no existe"
+echo "=============================="
 
 echo "✓ Build completado"

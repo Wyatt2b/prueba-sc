@@ -4,12 +4,28 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- Activar fingerprinting de archivos estáticos -->
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    
+    <!-- Configurar los patrones de fingerprinting -->
+    <StaticWebAssetFingerprintPattern>JS:*.js:.#[{fingerprint}]!</StaticWebAssetFingerprintPattern>
+    
+    <!-- Forzar que los archivos de Blazor siempre se copien con fingerprint -->
+    <BlazorWebAssemblyLoadAllGlobalizationData>false</BlazorWebAssemblyLoadAllGlobalizationData>
+    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.10" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Forzar que _headers se incluya en la publicación -->
+  <ItemGroup>
+    <Content Include="wwwroot/_headers">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

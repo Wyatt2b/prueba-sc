@@ -5,14 +5,16 @@ chmod +x dotnet-install.sh
 ./dotnet/dotnet --version
 ./dotnet/dotnet publish -c Release -o output
 
-# Crear _headers para Cloudflare Pages
+# Crear _headers con todos los MIME types necesarios para Blazor
 cat > output/wwwroot/_headers << 'EOF'
 /*
-  X-Content-Type-Options: nosniff
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: text/html
 
-/*.html
-  Cache-Control: public, max-age=0, must-revalidate
+/*.css
+  Content-Type: text/css
+
+/*.js
+  Content-Type: application/javascript
 
 /*.wasm
   Content-Type: application/wasm
@@ -22,6 +24,24 @@ cat > output/wwwroot/_headers << 'EOF'
 
 /*.dat
   Content-Type: application/octet-stream
+
+/*.json
+  Content-Type: application/json
+
+/_framework/*
+  Content-Type: application/octet-stream
+
+/_framework/*.wasm
+  Content-Type: application/wasm
+
+/_framework/*.js
+  Content-Type: application/javascript
+
+/_framework/*.css
+  Content-Type: text/css
 EOF
 
-echo "✓ _headers creado en output/wwwroot/"
+# Asegurar que index.html tenga el base href correcto
+sed -i 's/<base href="[^"]*"/<base href="\/"/g' output/wwwroot/index.html
+
+echo "✓ _headers creado y index.html corregido"

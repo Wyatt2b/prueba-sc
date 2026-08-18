@@ -1,0 +1,15 @@
+/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.wasm
+  Content-Type: application/wasm
+
+/*.dll
+  Content-Type: application/octet-stream
+
+/*.dat
+  Content-Type: application/octet-stream

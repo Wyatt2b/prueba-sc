@@ -1,22 +1,21 @@
-using ReforaTec.Models; // Asegúrate de que el namespace sea el correcto
+using ReforaTec.Models;  // <-- Importante
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ReforaTec.Services
 {
     public interface IReforaTecApiService
     {
-        // --- Trees ---
-        Task<List<Tree>> GetTreesAsync();
-        Task<Tree> GetTreeByIdAsync(int id);
-        Task<Tree> CreateTreeAsync(Tree newTree);
+        Task<List<ApiTree>> GetTreesAsync();
+        Task<ApiTree> GetTreeByIdAsync(int id);
+        Task<ApiTree> CreateTreeAsync(ApiTree newTree);
 
-        // --- Species ---
-        Task<List<Species>> GetSpeciesAsync();
-        Task<Species> GetSpeciesByIdAsync(int id);
-        Task<Species> CreateSpeciesAsync(Species newSpecies);
+        Task<List<ApiSpecies>> GetSpeciesAsync();
+        Task<ApiSpecies> GetSpeciesByIdAsync(int id);
+        Task<ApiSpecies> CreateSpeciesAsync(ApiSpecies newSpecies);
 
-        // --- Values ---
-        Task<List<Value>> GetValuesAsync();
-        Task<Value> GetValueByIdAsync(int id);
-        Task<Value> CreateValueAsync(Value newValue);
+        Task<List<ApiValue>> GetValuesAsync();
+        Task<ApiValue> GetValueByIdAsync(int id);
+        Task<ApiValue> CreateValueAsync(ApiValue newValue);
     }
 }

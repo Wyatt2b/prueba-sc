@@ -1,6 +1,10 @@
+using ReforaTec.Models;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using ReforaTec.Models;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace ReforaTec.Services
 {
@@ -15,41 +19,41 @@ namespace ReforaTec.Services
             _logger = logger;
         }
 
-        // ============ TREES ============
-        public async Task<List<Tree>> GetTreesAsync()
+        // ============ ÁRBOLES (Trees) ============
+        public async Task<List<ApiTree>> GetTreesAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Tree>>("/api/v1/trees") 
-                       ?? new List<Tree>();
+                return await _httpClient.GetFromJsonAsync<List<ApiTree>>("/api/v1/trees") 
+                       ?? new List<ApiTree>();
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error al obtener los árboles");
-                return new List<Tree>();
+                return new List<ApiTree>();
             }
         }
 
-        public async Task<Tree> GetTreeByIdAsync(int id)
+        public async Task<ApiTree> GetTreeByIdAsync(int id)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<Tree>($"/api/v1/trees/{id}");
+                return await _httpClient.GetFromJsonAsync<ApiTree>($"/api/v1/trees/{id}");
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, $"Error al obtener el árbol con ID {id}");
-                throw; // Re-lanza para que la página maneje el error
+                throw;
             }
         }
 
-        public async Task<Tree> CreateTreeAsync(Tree newTree)
+        public async Task<ApiTree> CreateTreeAsync(ApiTree newTree)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("/api/v1/trees", newTree);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<Tree>();
+                return await response.Content.ReadFromJsonAsync<ApiTree>();
             }
             catch (HttpRequestException ex)
             {
@@ -58,27 +62,26 @@ namespace ReforaTec.Services
             }
         }
 
-        // ============ SPECIES ============
-        public async Task<List<Species>> GetSpeciesAsync()
+        // ============ ESPECIES (Species) ============
+        public async Task<List<ApiSpecies>> GetSpeciesAsync()
         {
             try
             {
-                // Asumiendo que existe el endpoint; si no, ajusta la ruta
-                return await _httpClient.GetFromJsonAsync<List<Species>>("/api/v1/species") 
-                       ?? new List<Species>();
+                return await _httpClient.GetFromJsonAsync<List<ApiSpecies>>("/api/v1/species") 
+                       ?? new List<ApiSpecies>();
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error al obtener las especies");
-                return new List<Species>();
+                return new List<ApiSpecies>();
             }
         }
 
-        public async Task<Species> GetSpeciesByIdAsync(int id)
+        public async Task<ApiSpecies> GetSpeciesByIdAsync(int id)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<Species>($"/api/v1/species/{id}");
+                return await _httpClient.GetFromJsonAsync<ApiSpecies>($"/api/v1/species/{id}");
             }
             catch (HttpRequestException ex)
             {
@@ -87,13 +90,13 @@ namespace ReforaTec.Services
             }
         }
 
-        public async Task<Species> CreateSpeciesAsync(Species newSpecies)
+        public async Task<ApiSpecies> CreateSpeciesAsync(ApiSpecies newSpecies)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("/api/v1/species", newSpecies);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<Species>();
+                return await response.Content.ReadFromJsonAsync<ApiSpecies>();
             }
             catch (HttpRequestException ex)
             {
@@ -102,26 +105,26 @@ namespace ReforaTec.Services
             }
         }
 
-        // ============ VALUES ============
-        public async Task<List<Value>> GetValuesAsync()
+        // ============ VALORES (Values) ============
+        public async Task<List<ApiValue>> GetValuesAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Value>>("/api/v1/values") 
-                       ?? new List<Value>();
+                return await _httpClient.GetFromJsonAsync<List<ApiValue>>("/api/v1/values") 
+                       ?? new List<ApiValue>();
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error al obtener los valores");
-                return new List<Value>();
+                return new List<ApiValue>();
             }
         }
 
-        public async Task<Value> GetValueByIdAsync(int id)
+        public async Task<ApiValue> GetValueByIdAsync(int id)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<Value>($"/api/v1/values/{id}");
+                return await _httpClient.GetFromJsonAsync<ApiValue>($"/api/v1/values/{id}");
             }
             catch (HttpRequestException ex)
             {
@@ -130,13 +133,13 @@ namespace ReforaTec.Services
             }
         }
 
-        public async Task<Value> CreateValueAsync(Value newValue)
+        public async Task<ApiValue> CreateValueAsync(ApiValue newValue)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("/api/v1/values", newValue);
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<Value>();
+                return await response.Content.ReadFromJsonAsync<ApiValue>();
             }
             catch (HttpRequestException ex)
             {

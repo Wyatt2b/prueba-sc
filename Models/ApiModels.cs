@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace ReforaTec.Models
 {
-    // Modelo para /api/v1/trees
     public class ApiTree
     {
         public int Id { get; set; }
@@ -27,7 +26,6 @@ namespace ReforaTec.Models
         public string StreetNumber { get; set; }
     }
 
-    // Modelo para /api/v1/species
     public class ApiSpecies
     {
         public int Id { get; set; }
@@ -39,7 +37,6 @@ namespace ReforaTec.Models
         public DateTime ModifiedAt { get; set; }
     }
 
-    // Modelo para /api/v1/values
     public class ApiValue
     {
         public int Id { get; set; }

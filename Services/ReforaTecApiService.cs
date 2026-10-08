@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ReforaTec.Services

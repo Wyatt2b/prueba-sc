@@ -1,21 +1,20 @@
 @page "/login"
 @layout AuthLayout
 @using ReforaTec.Models
+@using ReforaTec.Services
 @inject NavigationManager Nav
+@inject IReforaTecApiService ApiService
+@inject TokenService TokenService
 
 @*
     ============================================================================
-     PAGINA: Login  (Epica 1 - Autenticacion por OTP)
+     PAGINA: Login  (Épica 1 - Autenticación por OTP)
     ----------------------------------------------------------------------------
-     Simula el inicio de sesion por codigo temporal (OTP) al correo institucional.
-     Como no hay backend todavia:
-       - Validamos el dominio del correo aqui, en el frontend.
-       - El "envio" del codigo es simulado (el backend mandaria el correo real).
-       - Cualquier codigo de 6 digitos es aceptado en la demo.
-       - El ROL se toma de los datos de prueba: solo Admin o Coordinador entran;
-         cualquier otro rol ve el mensaje "Rol No Autorizado".
-
-     El flujo tiene 3 pasos que controlamos con la variable "paso".
+     Ahora conectada a la API REAL: http://reforatec-api.onrender.com
+       - Paso 1: envía el correo → POST /api/v1/otp-codes
+       - Paso 2: verifica el OTP → POST /api/v1/sessions
+       - Guarda los tokens JWT con TokenService
+       - Redirige al home
     ============================================================================
 *@
 
@@ -38,13 +37,12 @@
             <p class="msg msg--error">@mensaje</p>
         }
 
-        <button class="btn btn--primary btn--block" @onclick="EnviarCodigo">
-            Enviar código
+        <button class="btn btn--primary btn--block" @onclick="EnviarCodigo" disabled="@cargando">
+            @(cargando ? "Enviando..." : "Enviar código")
         </button>
 
         <p class="auth-hint">
-            Demo: usa <b>coordinador@@cdmadero.tecnm.mx</b> o
-            <b>admin@@cdmadero.tecnm.mx</b>
+            Usa tu correo institucional registrado en ReforaTec.
         </p>
     }
     else if (paso == Paso.Codigo)
@@ -59,82 +57,113 @@
             <p class="msg msg--error">@mensaje</p>
         }
 
-        <button class="btn btn--primary btn--block" @onclick="VerificarCodigo">Entrar</button>
-        <button class="btn btn--ghost btn--block" @onclick="Volver">Cambiar correo</button>
-
-        <p class="auth-hint">Demo: escribe cualquier código de 6 dígitos (ej. 123456).</p>
-    }
-    else
-    {
-        <p class="msg msg--error msg--big">Rol No Autorizado</p>
-        <p class="auth-info">Esta cuenta no tiene permisos para el portal administrativo.</p>
-        <button class="btn btn--ghost btn--block" @onclick="Volver">Volver</button>
+        <button class="btn btn--primary btn--block" @onclick="VerificarCodigo" disabled="@cargando">
+            @(cargando ? "Verificando..." : "Entrar")
+        </button>
+        <button class="btn btn--ghost btn--block" @onclick="Volver" disabled="@cargando">
+            Cambiar correo
+        </button>
     }
 </div>
 
 @code {
-    // Los tres estados posibles de la pantalla.
-    private enum Paso { Correo, Codigo, NoAutorizado }
+    private enum Paso { Correo, Codigo }
     private Paso paso = Paso.Correo;
 
-    // Campos que escribe el usuario.
     private string correo = string.Empty;
     private string codigo = string.Empty;
     private string mensaje = string.Empty;
+    private bool cargando = false;
 
-    // Usuario encontrado por su correo (para conocer su rol al validar).
-    private Usuario? usuario;
+    // ⚠️ Este es el "audience" que espera la API. Ajústalo según lo que te indique el equipo de la API.
+    private const string Audience = "refortec-web";
 
-    private const string Dominio = "@cdmadero.tecnm.mx";
-
-    // ---- Paso 1: validar correo y "enviar" el codigo ------------------------
-    private void EnviarCodigo()
+    // ---- Paso 1: solicitar el OTP real a la API ----------------------------
+    private async Task EnviarCodigo()
     {
         mensaje = string.Empty;
 
-        // Validacion de dominio institucional.
-        if (string.IsNullOrWhiteSpace(correo) ||
-            !correo.Trim().ToLower().EndsWith(Dominio))
+        if (string.IsNullOrWhiteSpace(correo) || !correo.Contains("@"))
         {
-            mensaje = $"Usa tu correo institucional (debe terminar en {Dominio}).";
+            mensaje = "Escribe un correo válido.";
             return;
         }
 
-        // Buscamos al usuario. AQUI el backend generaria y enviaria el OTP real.
-        usuario = DatosDemo.Usuarios
-            .FirstOrDefault(u => u.Correo.ToLower() == correo.Trim().ToLower());
+        cargando = true;
+        try
+        {
+            await ApiService.RequestOtpAsync(new AuthRequestOtpRequest
+            {
+                Email = correo.Trim().ToLower()
+            });
 
-        // Avanzamos a capturar el codigo. La validacion del rol se hace despues,
-        // para no revelar que cuentas existen y cuales no.
-        paso = Paso.Codigo;
+            paso = Paso.Codigo;
+        }
+        catch (HttpRequestException ex)
+        {
+            mensaje = ex.StatusCode switch
+            {
+                System.Net.HttpStatusCode.BadRequest => "Correo inválido o no registrado.",
+                System.Net.HttpStatusCode.NotFound => "El correo no está registrado en ReforaTec.",
+                _ => $"Error al solicitar el código: {ex.Message}"
+            };
+        }
+        catch (Exception ex)
+        {
+            mensaje = $"Error inesperado: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
     }
 
-    // ---- Paso 2: verificar el codigo y el rol -------------------------------
-    private void VerificarCodigo()
+    // ---- Paso 2: verificar el OTP y guardar los tokens ---------------------
+    private async Task VerificarCodigo()
     {
         mensaje = string.Empty;
 
-        // El codigo debe ser de 6 digitos.
         if (codigo.Length != 6 || !codigo.All(char.IsDigit))
         {
             mensaje = "El código debe tener 6 dígitos.";
             return;
         }
 
-        // Solo Administrador o Coordinador pueden entrar al portal.
-        if (usuario is null ||
-            (usuario.Rol != RolUsuario.AdminSistema && usuario.Rol != RolUsuario.Coordinador))
+        cargando = true;
+        try
         {
-            paso = Paso.NoAutorizado;
-            return;
-        }
+            var response = await ApiService.VerifyOtpAsync(new AuthVerifyOtpRequest
+            {
+                Email = correo.Trim().ToLower(),
+                OtpCode = codigo,
+                Audience = Audience
+            });
 
-        // Todo correcto: iniciamos sesion y vamos al dashboard.
-        AppState.IniciarSesion(usuario.Rol, usuario.Correo);
-        Nav.NavigateTo("/");
+            // ✅ Guardar los tokens JWT
+            await TokenService.SaveTokensAsync(response.AccessToken, response.RefreshToken);
+
+            // ✅ Redirigir al home
+            Nav.NavigateTo("/");
+        }
+        catch (HttpRequestException ex)
+        {
+            mensaje = ex.StatusCode switch
+            {
+                System.Net.HttpStatusCode.Unauthorized => "Código incorrecto o expirado.",
+                System.Net.HttpStatusCode.BadRequest => "Datos inválidos. Revisa el código.",
+                _ => $"Error al verificar el código: {ex.Message}"
+            };
+        }
+        catch (Exception ex)
+        {
+            mensaje = $"Error inesperado: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
     }
 
-    // Regresar al primer paso.
     private void Volver()
     {
         paso = Paso.Correo;

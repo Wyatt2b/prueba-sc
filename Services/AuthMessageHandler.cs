@@ -14,7 +14,7 @@ namespace ReforaTec.Services
     {
         private readonly TokenService _tokenService;
         private readonly ILogger<AuthMessageHandler> _logger;
-        private const string BaseUrl = "http://reforatec-api.onrender.com";
+        private const string BaseUrl = "https://reforatec-api.onrender.com";
 
         public AuthMessageHandler(TokenService tokenService, ILogger<AuthMessageHandler> logger)
         {

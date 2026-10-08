@@ -16,7 +16,7 @@ builder.Services.AddTransient<AuthMessageHandler>();
 // 3. Registrar HttpClient con nombre + Handler
 builder.Services.AddHttpClient("ReforaTecApi", client =>
 {
-    client.BaseAddress = new Uri("http://reforatec-api.onrender.com");
+    client.BaseAddress = new Uri("https://reforatec-api.onrender.com"); // ✅ HTTPS
 })
 .AddHttpMessageHandler<AuthMessageHandler>();
 

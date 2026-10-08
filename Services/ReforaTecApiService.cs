@@ -1,7 +1,9 @@
 using ReforaTec.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -19,133 +21,110 @@ namespace ReforaTec.Services
             _logger = logger;
         }
 
-        // ============ ÁRBOLES (Trees) ============
-        public async Task<List<ApiTree>> GetTreesAsync()
+        // ============ AUTENTICACIÓN ============
+
+        public async Task RequestOtpAsync(AuthRequestOtpRequest request)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<ApiTree>>("/api/v1/trees") 
-                       ?? new List<ApiTree>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al obtener los árboles");
-                return new List<ApiTree>();
-            }
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/otp-codes", request);
+            response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ApiTree> GetTreeByIdAsync(int id)
+        public async Task<AuthVerifyOtpResponse> VerifyOtpAsync(AuthVerifyOtpRequest request)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<ApiTree>($"/api/v1/trees/{id}");
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, $"Error al obtener el árbol con ID {id}");
-                throw;
-            }
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/sessions", request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<AuthVerifyOtpResponse>();
         }
 
-        public async Task<ApiTree> CreateTreeAsync(ApiTree newTree)
+        public async Task<AuthRefreshSessionResponse> RefreshSessionAsync(AuthRefreshSessionRequest request)
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("/api/v1/trees", newTree);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ApiTree>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al crear un nuevo árbol");
-                throw;
-            }
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/sessions/refresh", request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<AuthRefreshSessionResponse>();
         }
 
-        // ============ ESPECIES (Species) ============
-        public async Task<List<ApiSpecies>> GetSpeciesAsync()
+        public async Task RevokeSessionAsync(AuthRevokeSessionRequest request)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<ApiSpecies>>("/api/v1/species") 
-                       ?? new List<ApiSpecies>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al obtener las especies");
-                return new List<ApiSpecies>();
-            }
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/sessions/revoke", request);
+            response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ApiSpecies> GetSpeciesByIdAsync(int id)
+        public async Task<AuthRegisterUserResponse> RegisterUserAsync(AuthRegisterUserRequest request)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<ApiSpecies>($"/api/v1/species/{id}");
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, $"Error al obtener la especie con ID {id}");
-                throw;
-            }
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/users", request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<AuthRegisterUserResponse>();
         }
 
-        public async Task<ApiSpecies> CreateSpeciesAsync(ApiSpecies newSpecies)
+        // ============ ÁRBOLES ============
+
+        public async Task<List<UsersGetMyTreesResponse>> GetMyAssignedTreesAsync()
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("/api/v1/species", newSpecies);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ApiSpecies>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al crear una nueva especie");
-                throw;
-            }
+            return await _httpClient.GetFromJsonAsync<List<UsersGetMyTreesResponse>>("/api/v1/users/me/trees")
+                   ?? new List<UsersGetMyTreesResponse>();
         }
 
-        // ============ VALORES (Values) ============
-        public async Task<List<ApiValue>> GetValuesAsync()
+        public async Task<TreesGetTreeByIdResponse> GetTreeByIdAsync(int id)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<ApiValue>>("/api/v1/values") 
-                       ?? new List<ApiValue>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al obtener los valores");
-                return new List<ApiValue>();
-            }
+            return await _httpClient.GetFromJsonAsync<TreesGetTreeByIdResponse>($"/api/v1/trees/{id}");
         }
 
-        public async Task<ApiValue> GetValueByIdAsync(int id)
+        public async Task<List<TreesGetTreeServicesResponse>> GetTreeServicesAsync(int treeId)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<ApiValue>($"/api/v1/values/{id}");
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, $"Error al obtener el valor con ID {id}");
-                throw;
-            }
+            return await _httpClient.GetFromJsonAsync<List<TreesGetTreeServicesResponse>>($"/api/v1/trees/{treeId}/services")
+                   ?? new List<TreesGetTreeServicesResponse>();
         }
 
-        public async Task<ApiValue> CreateValueAsync(ApiValue newValue)
+        public async Task<UploadFileResponse> UploadTreeMeasurementPhotoAsync(int treeId, Stream fileStream, string fileName)
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("/api/v1/values", newValue);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<ApiValue>();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error al crear un nuevo valor");
-                throw;
-            }
+            using var content = new MultipartFormDataContent();
+            var streamContent = new StreamContent(fileStream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            content.Add(streamContent, "treePhoto", fileName);
+
+            var response = await _httpClient.PostAsync($"/api/v1/trees/{treeId}/measurements/photo", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UploadFileResponse>();
+        }
+
+        // ============ CAMPAÑAS ============
+
+        public async Task<CampaignsGetCampaignByIdResponse> GetCampaignByIdAsync(int id)
+        {
+            return await _httpClient.GetFromJsonAsync<CampaignsGetCampaignByIdResponse>($"/api/v1/campaigns/{id}");
+        }
+
+        public async Task<CampaignsCreateCampaignResponse> CreateCampaignAsync(CampaignsCreateCampaignRequest request)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/campaigns", request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<CampaignsCreateCampaignResponse>();
+        }
+
+        // ============ CATÁLOGOS (SUBIDA DE ARCHIVOS) ============
+
+        public async Task<UploadFileResponse> UploadSpeciesImageAsync(Stream fileStream, string fileName)
+        {
+            using var content = new MultipartFormDataContent();
+            var streamContent = new StreamContent(fileStream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            content.Add(streamContent, "speciesImage", fileName);
+
+            var response = await _httpClient.PostAsync("/api/v1/species/images", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UploadFileResponse>();
+        }
+
+        public async Task<UploadFileResponse> UploadServiceTypeIconAsync(Stream fileStream, string fileName)
+        {
+            using var content = new MultipartFormDataContent();
+            var streamContent = new StreamContent(fileStream);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            content.Add(streamContent, "iconFile", fileName);
+
+            var response = await _httpClient.PostAsync("/api/v1/service-types/icons", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UploadFileResponse>();
         }
     }
 }

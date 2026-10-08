@@ -6,16 +6,25 @@ namespace ReforaTec.Services
 {
     public interface IReforaTecApiService
     {
-        Task<List<ApiTree>> GetTreesAsync();
-        Task<ApiTree> GetTreeByIdAsync(int id);
-        Task<ApiTree> CreateTreeAsync(ApiTree newTree);
+        // Autenticación
+        Task<AuthVerifyOtpResponse> VerifyOtpAsync(AuthVerifyOtpRequest request);
+        Task<AuthRefreshSessionResponse> RefreshSessionAsync(AuthRefreshSessionRequest request);
+        Task RevokeSessionAsync(AuthRevokeSessionRequest request);
+        Task<AuthRegisterUserResponse> RegisterUserAsync(AuthRegisterUserRequest request);
+        Task RequestOtpAsync(AuthRequestOtpRequest request);
 
-        Task<List<ApiSpecies>> GetSpeciesAsync();
-        Task<ApiSpecies> GetSpeciesByIdAsync(int id);
-        Task<ApiSpecies> CreateSpeciesAsync(ApiSpecies newSpecies);
+        // Árboles
+        Task<List<UsersGetMyTreesResponse>> GetMyAssignedTreesAsync();
+        Task<TreesGetTreeByIdResponse> GetTreeByIdAsync(int id);
+        Task<List<TreesGetTreeServicesResponse>> GetTreeServicesAsync(int treeId);
+        Task<UploadFileResponse> UploadTreeMeasurementPhotoAsync(int treeId, Stream fileStream, string fileName);
 
-        Task<List<ApiValue>> GetValuesAsync();
-        Task<ApiValue> GetValueByIdAsync(int id);
-        Task<ApiValue> CreateValueAsync(ApiValue newValue);
+        // Campañas
+        Task<CampaignsGetCampaignByIdResponse> GetCampaignByIdAsync(int id);
+        Task<CampaignsCreateCampaignResponse> CreateCampaignAsync(CampaignsCreateCampaignRequest request);
+
+        // Catálogos (subida de archivos)
+        Task<UploadFileResponse> UploadSpeciesImageAsync(Stream fileStream, string fileName);
+        Task<UploadFileResponse> UploadServiceTypeIconAsync(Stream fileStream, string fileName);
     }
 }

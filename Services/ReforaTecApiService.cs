@@ -15,9 +15,10 @@ namespace ReforaTec.Services
         private readonly HttpClient _httpClient;
         private readonly ILogger<ReforaTecApiService> _logger;
 
-        public ReforaTecApiService(HttpClient httpClient, ILogger<ReforaTecApiService> logger)
+        // ✅ Constructor modificado para usar IHttpClientFactory
+        public ReforaTecApiService(IHttpClientFactory httpClientFactory, ILogger<ReforaTecApiService> logger)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ReforaTecApi");
             _logger = logger;
         }
 
@@ -60,8 +61,16 @@ namespace ReforaTec.Services
 
         public async Task<List<UsersGetMyTreesResponse>> GetMyAssignedTreesAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<UsersGetMyTreesResponse>>("/api/v1/users/me/trees")
-                   ?? new List<UsersGetMyTreesResponse>();
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<UsersGetMyTreesResponse>>("/api/v1/users/me/trees")
+                       ?? new List<UsersGetMyTreesResponse>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Error al obtener árboles asignados");
+                return new List<UsersGetMyTreesResponse>();
+            }
         }
 
         public async Task<TreesGetTreeByIdResponse> GetTreeByIdAsync(int id)

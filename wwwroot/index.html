@@ -28,6 +28,16 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
+
+    <!-- ✅ Script auxiliar para localStorage -->
+    <script>
+        window.localStorageHelper = {
+            getItem: function (key) { return window.localStorage.getItem(key); },
+            setItem: function (key, value) { window.localStorage.setItem(key, value); },
+            removeItem: function (key) { window.localStorage.removeItem(key); }
+        };
+    </script>
+
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
